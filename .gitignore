@@ -27,3 +27,6 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Claude 훅 태스크 매핑 (로컬 세션 데이터)
+scripts/.todo-task-map.json

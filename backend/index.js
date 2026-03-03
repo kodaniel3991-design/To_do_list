@@ -23,6 +23,12 @@ app.get('/api/tasks', (req, res) => {
   res.json(db.getTasks(req.query));
 });
 
+app.get('/api/tasks/:id', (req, res) => {
+  const task = db.getTask(req.params.id);
+  if (!task) return res.status(404).json({ error: 'Task not found' });
+  res.json(task);
+});
+
 app.post('/api/tasks', (req, res) => {
   const { title, description, priority, project, role } = req.body;
   if (!title) return res.status(400).json({ error: 'title is required' });

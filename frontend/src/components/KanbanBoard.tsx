@@ -14,9 +14,10 @@ interface Props {
   tasks: Task[];
   onStatusChange: (id: string, status: Status) => void;
   onDelete: (id: string) => void;
+  onOpen: (task: Task) => void;
 }
 
-export default function KanbanBoard({ tasks, onStatusChange, onDelete }: Props) {
+export default function KanbanBoard({ tasks, onStatusChange, onDelete, onOpen }: Props) {
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOverCol, setDragOverCol] = useState<Status | null>(null);
 
@@ -78,6 +79,7 @@ export default function KanbanBoard({ tasks, onStatusChange, onDelete }: Props) 
                     onDragEnd={() => { setDraggingId(null); setDragOverCol(null); }}
                     onStatusChange={onStatusChange}
                     onDelete={onDelete}
+                    onOpen={onOpen}
                   />
                 ))
               )}

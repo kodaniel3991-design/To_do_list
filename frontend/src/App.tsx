@@ -5,6 +5,7 @@ import Header from './components/Header';
 import FilterBar from './components/FilterBar';
 import KanbanBoard from './components/KanbanBoard';
 import NewTaskModal from './components/NewTaskModal';
+import TaskDetailModal from './components/TaskDetailModal';
 
 const API = '/api';
 const SOCKET_URL = 'http://localhost:3001';
@@ -18,6 +19,7 @@ export default function App() {
   const [selectedRole, setSelectedRole] = useState<Role | 'all'>('all');
   const [showModal, setShowModal] = useState(false);
   const [connected, setConnected] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
   // Fetch initial data
   useEffect(() => {
@@ -111,6 +113,7 @@ export default function App() {
           tasks={filteredTasks}
           onStatusChange={handleStatusChange}
           onDelete={handleDelete}
+          onOpen={task => setSelectedTaskId(task.id)}
         />
       </div>
 
@@ -121,6 +124,17 @@ export default function App() {
           onCreate={handleCreate}
         />
       )}
+
+      {selectedTaskId && (() => {
+        const t = tasks.find(t => t.id === selectedTaskId);
+        return t ? (
+          <TaskDetailModal
+            task={t}
+            onClose={() => setSelectedTaskId(null)}
+            onStatusChange={handleStatusChange}
+          />
+        ) : null;
+      })()}
     </div>
   );
 }

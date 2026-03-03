@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Task, Status } from '../types';
 
+
 const PRIORITY_COLORS: Record<string, string> = {
   critical: 'bg-red-500 text-white',
   high: 'bg-orange-500 text-white',
@@ -41,12 +42,14 @@ interface Props {
   onDragEnd: () => void;
   onStatusChange: (id: string, status: Status) => void;
   onDelete: (id: string) => void;
+  onOpen: (task: Task) => void;
 }
 
-export default function TaskCard({ task, isDragging, onDragStart, onDragEnd, onStatusChange, onDelete }: Props) {
+export default function TaskCard({ task, isDragging, onDragStart, onDragEnd, onStatusChange, onDelete, onOpen }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
+  const draggedRef = useRef(false);
   const lastChange = task.statusHistory[task.statusHistory.length - 1];
 
   // Close menu on outside click
@@ -72,17 +75,18 @@ export default function TaskCard({ task, isDragging, onDragStart, onDragEnd, onS
   return (
     <div
       draggable
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
+      onDragStart={() => { draggedRef.current = true; onDragStart(); }}
+      onDragEnd={() => { onDragEnd(); setTimeout(() => { draggedRef.current = false; }, 0); }}
+      onClick={() => { if (!draggedRef.current) onOpen(task); }}
       className={`bg-gray-800 border rounded-lg p-3 group relative transition-all cursor-grab active:cursor-grabbing
         ${isDragging
           ? 'opacity-40 scale-95 border-blue-500'
-          : 'border-gray-700 hover:border-gray-600'
+          : 'border-gray-700 hover:border-gray-600 hover:bg-gray-750'
         }`}
     >
       {/* Delete button */}
       <button
-        onClick={() => onDelete(task.id)}
+        onClick={e => { e.stopPropagation(); onDelete(task.id); }}
         className="absolute top-2 right-2 text-gray-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity text-xs"
         title="Delete"
       >
@@ -129,7 +133,7 @@ export default function TaskCard({ task, isDragging, onDragStart, onDragEnd, onS
         <div>
           <button
             ref={btnRef}
-            onClick={handleMoveClick}
+            onClick={e => { e.stopPropagation(); handleMoveClick(); }}
             className="text-xs text-gray-500 hover:text-blue-400 transition-colors px-2 py-0.5 rounded border border-gray-700 hover:border-blue-500"
           >
             Move ▾

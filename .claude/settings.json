@@ -21,5 +21,18 @@
       "Bash(rm -rf *)",
       "Bash(sudo *)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "TodoWrite",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node C:/Users/USER/To_do_list/scripts/sync-todos.js"
+          }
+        ]
+      }
+    ]
   }
 }
